@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/sort"
+        android:title="Sort by Date Modified"/>
+    <item android:id="@+id/sortbyid"
+        android:title="Sort by Date Created"/>
+    <item android:id="@+id/delete"
+        android:title="Delete all notes"/>
+</menu>
