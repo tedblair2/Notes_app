@@ -10,5 +10,5 @@ data class Note(
     val note:String,
     val category:String,
     val date:Long,
-    val isSelected:Boolean
+    var isSelected:Boolean
 )

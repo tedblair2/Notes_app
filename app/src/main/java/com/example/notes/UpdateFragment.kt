@@ -34,12 +34,6 @@ class UpdateFragment : Fragment() {
         _binding= FragmentUpdateBinding.inflate(inflater,container,false)
         val view=binding.root
 
-        (activity as AppCompatActivity).setSupportActionBar(binding.toolbarUpdate)
-        (activity as AppCompatActivity).supportActionBar?.apply {
-            setDisplayHomeAsUpEnabled(true)
-            setDisplayShowHomeEnabled(true)
-        }
-
         val note=arguments?.getString("note")
         val id=arguments?.getInt("id")
         val category1=arguments?.getString("category")

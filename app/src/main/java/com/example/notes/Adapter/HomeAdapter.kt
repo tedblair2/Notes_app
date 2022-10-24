@@ -8,6 +8,7 @@ import android.view.*
 import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
+import com.example.notes.Model.LongPress
 import com.example.notes.Model.Note
 import com.example.notes.R
 import com.example.notes.ViewModel.AppViewModel
@@ -15,8 +16,11 @@ import com.example.notes.databinding.HomeItemsBinding
 import java.text.SimpleDateFormat
 import java.util.*
 
-class HomeAdapter(private val noteslist:List<Note>,private val context: Context)
+class HomeAdapter(private val noteslist:List<Note>,private val context: Context,private val longPress: LongPress)
     :RecyclerView.Adapter<HomeAdapter.ViewHolder>(){
+
+    private var multiselect=false
+    val selectedItems= arrayListOf<Note>()
 
     class ViewHolder(val binding:HomeItemsBinding):RecyclerView.ViewHolder(binding.root)
 
@@ -52,12 +56,29 @@ class HomeAdapter(private val noteslist:List<Note>,private val context: Context)
             }
         }
         holder.itemView.setOnClickListener {
-            val bundle=Bundle()
-            bundle.putString("note",note.note)
-            bundle.putString("category",note.category)
-            bundle.putLong("date",note.date)
-            bundle.putInt("id",note.id)
-            holder.itemView.findNavController().navigate(R.id.action_homeFragment_to_updateFragment,bundle)
+            if (multiselect){
+                longPress.longPress(position)
+                selectItem(holder,note)
+            }else{
+                val bundle=Bundle()
+                bundle.putString("note",note.note)
+                bundle.putString("category",note.category)
+                bundle.putLong("date",note.date)
+                bundle.putInt("id",note.id)
+                holder.itemView.findNavController().navigate(R.id.action_homeFragment_to_updateFragment,bundle)
+            }
+
+        }
+        holder.itemView.setOnLongClickListener {
+            multiselect=true
+            selectItem(holder,note)
+            longPress.longPress(position)
+            true
+        }
+        if (selectedItems.isEmpty()){
+            multiselect=false
+            holder.binding.checked.visibility=View.GONE
+            holder.itemView.setBackgroundColor(Color.WHITE)
         }
     }
     override fun getItemCount(): Int {
@@ -69,24 +90,19 @@ class HomeAdapter(private val noteslist:List<Note>,private val context: Context)
         val format=SimpleDateFormat("yyyy.MM.dd HH:mm")
         return format.format(date)
     }
-//    private fun selectItem(holder: ViewHolder, note: Note) {
-//        if (selectedItems.contains(note)){
-//            holder.itemView.setBackgroundColor(Color.WHITE)
-//            selectedItems.remove(note)
-//            holder.binding.checked.visibility=View.GONE
-//            val item=Note(note.id,note.note,note.category,note.date,false)
-//            viewModel.updateNote(item)
-//        }else{
-//            holder.itemView.setBackgroundColor(ContextCompat.getColor(context,R.color.grey))
-//            holder.binding.checked.visibility=View.VISIBLE
-//            selectedItems.add(note)
-//            val item=Note(note.id,note.note,note.category,note.date,true)
-//            viewModel.updateNote(item)
-//        }
-//        if (selectedItems.isEmpty()){
-//            multiselect=false
-//            showmenu(false)
-//            holder.binding.checked.visibility=View.GONE
-//        }
-//    }
+    private fun selectItem(holder: ViewHolder, note: Note) {
+        if (selectedItems.contains(note)){
+            holder.itemView.setBackgroundColor(Color.WHITE)
+            selectedItems.remove(note)
+            holder.binding.checked.visibility=View.GONE
+        }else{
+            holder.itemView.setBackgroundColor(ContextCompat.getColor(context,R.color.grey))
+            holder.binding.checked.visibility=View.VISIBLE
+            selectedItems.add(note)
+        }
+        if (selectedItems.isEmpty()){
+            multiselect=false
+            holder.binding.checked.visibility=View.GONE
+        }
+    }
 }

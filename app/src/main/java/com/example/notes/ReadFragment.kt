@@ -37,11 +37,6 @@ class ReadFragment : Fragment() {
         _binding=FragmentReadBinding.inflate(inflater,container,false)
         val view=binding.root
 
-        (activity as AppCompatActivity).setSupportActionBar(binding.toolbarRead)
-        (activity as AppCompatActivity).supportActionBar?.apply {
-            setDisplayHomeAsUpEnabled(true)
-            setDisplayShowHomeEnabled(true)
-        }
         val menuHost:MenuHost=requireActivity()
 
         val note=arguments?.getString("note")
@@ -49,22 +44,6 @@ class ReadFragment : Fragment() {
         val dateLong=arguments?.getLong("date")
         val id=arguments?.getInt("id")
         val date=longToDate(dateLong!!)
-
-        menuHost.addMenuProvider(object:MenuProvider{
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.delete_item,menu)
-            }
-
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                return when(menuItem.itemId){
-                    R.id.deleteSpecific->{
-                        deleteNote(id,note,category,dateLong)
-                        true
-                    }
-                    else->false
-                }
-            }
-        },viewLifecycleOwner,Lifecycle.State.RESUMED)
 
         binding.click.setOnClickListener {
             val bundle=Bundle()
@@ -96,20 +75,6 @@ class ReadFragment : Fragment() {
             }
         }
         return view
-    }
-
-    private fun deleteNote(id: Int?, note: String?, category: String?, dateLong: Long) {
-        val alert=AlertDialog.Builder(requireContext())
-        alert.setTitle("Delete")
-        alert.setMessage("Are you sure you want to delete the message?")
-        alert.setPositiveButton("Yes"){_,_->
-            val note=Note(id!!,note!!,category!!,dateLong,false)
-            viewModel.deleteNote(note)
-            findNavController().navigate(R.id.action_readFragment_to_homeFragment)
-            Toast.makeText(requireContext(),"Note deleted successfully",Toast.LENGTH_SHORT).show()
-        }
-        alert.setNegativeButton("No"){_,_->}
-        alert.create().show()
     }
 
     @SuppressLint("SimpleDateFormat")

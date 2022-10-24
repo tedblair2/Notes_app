@@ -32,12 +32,6 @@ class AddFragment : Fragment() {
         _binding=FragmentAddBinding.inflate(inflater,container,false)
         val view=binding.root
 
-        (activity as AppCompatActivity).setSupportActionBar(binding.toolbarAdd)
-        (activity as AppCompatActivity).supportActionBar?.apply {
-            setDisplayHomeAsUpEnabled(true)
-            setDisplayShowHomeEnabled(true)
-        }
-
         var category="UnCategorized"
 
         binding.category.setOnClickListener {
